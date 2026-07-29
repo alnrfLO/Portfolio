@@ -1,16 +1,6 @@
 import { motion } from 'framer-motion'
 import { useLanguage } from '../context/useLanguage'
 
-const formation = [
-  { date: "2023-2024", titre: "Baccalauréat général", detail: "Option Mathématiques & NSI — Lycée Paul Le Rolland, Drancy" },
-  { date: "2024 – aujourd'hui", titre: "BUT MMI", detail: "Parcours Développement Web — IUT de Bobigny, Université Sorbonne Paris Nord" },
-]
-
-const experience = [
-  { date: "Juil – Août 2024", titre: "Animateur sportif", detail: "Ville de Bobigny — Animation sportive, encadrement de groupes (Bobigny Plage JO)" },
-  { date: "Avr. 2026 – aujourd'hui", titre: "Stagiaire Assistant Software Engineer", detail: "Hermès — Paris | Node.js / TypeScript, tests unitaires, code reviews, rituels Agile" },
-]
-
 function TimelineItem({ date, titre, detail, index }) {
   return (
     <motion.div
@@ -23,7 +13,7 @@ function TimelineItem({ date, titre, detail, index }) {
       <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
       <span className="text-cyan-400 text-sm font-mono">{date}</span>
       <h4 className="text-white font-bold mt-1">{titre}</h4>
-      <p className="text-gray-400 text-sm mt-1">{detail}</p>
+      <p className="text-gray-300 text-sm mt-1">{detail}</p>
     </motion.div>
   )
 }
@@ -52,7 +42,7 @@ function About() {
           className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
           <h3 className="text-xl font-semibold text-white mb-3">{t.introTitle}</h3>
-          <p className="text-gray-400 leading-relaxed">{t.introText}</p>
+          <p className="text-gray-300 leading-relaxed">{t.introText}</p>
         </motion.div>
 
         <motion.div
@@ -63,11 +53,10 @@ function About() {
           className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
           <h3 className="text-xl font-semibold text-white mb-3">{t.sportTitle}</h3>
-          <ul className="text-gray-400 space-y-2 text-sm">
-            <li>🥇 2021 — Compétition internationale, Portugal</li>
-            <li>🥇 2021 — Compétition internationale, Luxembourg</li>
-            <li>🥇 2022 — Compétition internationale, Belgique</li>
-            <li>🥉 2020 — Championnat de France</li>
+          <ul className="text-gray-300 space-y-2 text-sm">
+            {t.sportAchievements.map((a, i) => (
+              <li key={i}><span aria-hidden="true">{a.medal}</span> {a.text}</li>
+            ))}
           </ul>
         </motion.div>
       </div>
@@ -81,8 +70,8 @@ function About() {
           viewport={{ once: true }}
           className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
-          <h3 className="text-xl font-semibold text-white mb-8">📚 {t.formationTitle}</h3>
-          {formation.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
+          <h3 className="text-xl font-semibold text-white mb-8"><span aria-hidden="true">📚</span> {t.formationTitle}</h3>
+          {t.formationItems.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
         </motion.div>
 
         <motion.div
@@ -92,8 +81,8 @@ function About() {
           viewport={{ once: true }}
           className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
-          <h3 className="text-xl font-semibold text-white mb-8">💼 {t.experienceTitle}</h3>
-          {experience.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
+          <h3 className="text-xl font-semibold text-white mb-8"><span aria-hidden="true">💼</span> {t.experienceTitle}</h3>
+          {t.experienceItems.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
         </motion.div>
       </div>
     </section>

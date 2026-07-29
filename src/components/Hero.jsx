@@ -57,14 +57,14 @@ function TypewriterText({ text, delay = 0, speed = 50, showCursor = false, key: 
   )
 }
 
-function Hero() {
+function Hero({ headingRef }) {
   const { t, langue } = useLanguage()
   const totalDuration = paths.length * 0.1 + 0.5
   const name = "Rafael Antunes Oliveira"
 
   return (
     <section id="Accueil" className="flex flex-col items-center justify-center min-h-screen overflow-hidden px-6 text-center">
-      <svg width="280" height="230" viewBox="0 0 194 157" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg aria-hidden="true" focusable="false" width="280" height="230" viewBox="0 0 194 157" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="paint0_linear_231_42" x1="29.1624" y1="104" x2="29.1624" y2="155" gradientUnits="userSpaceOnUse"><stop stopColor="#889E6C"/><stop offset="1" stopColor="#354848"/></linearGradient>
           <linearGradient id="paint1_linear_231_42" x1="53.8146" y1="67.537" x2="11.7627" y2="88.8977" gradientUnits="userSpaceOnUse"><stop stopColor="#889E6C"/><stop offset="1" stopColor="#354848"/></linearGradient>
@@ -99,12 +99,17 @@ function Hero() {
       </svg>
 
       <motion.h1
+        ref={headingRef}
+        tabIndex={-1}
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: totalDuration, duration: 0.8, ease: "easeOut" }}
-        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center mt-6 h-20"
+        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center mt-6 min-h-20 focus:outline-none"
+        aria-label={name}
       >
-        <TypewriterText text={name} delay={totalDuration * 1000} speed={40} showCursor={true} key={`name-${langue}`} />
+        <span aria-hidden="true">
+          <TypewriterText text={name} delay={totalDuration * 1000} speed={40} showCursor={true} key={`name-${langue}`} />
+        </span>
       </motion.h1>
 
       <motion.p
@@ -113,7 +118,10 @@ function Hero() {
         transition={{ delay: totalDuration + 1.8, duration: 0.6 }}
         className="text-lg sm:text-xl md:text-2xl text-white mt-4"
       >
-        <TypewriterText text={t.devTitle} delay={(totalDuration + 1.8) * 1000} speed={30} showCursor={true} key={`subtitle-${langue}`} />
+        <span className="sr-only">{t.devTitle}</span>
+        <span aria-hidden="true">
+          <TypewriterText text={t.devTitle} delay={(totalDuration + 1.8) * 1000} speed={30} showCursor={true} key={`subtitle-${langue}`} />
+        </span>
       </motion.p>
     </section>
   )

@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useLanguage } from '../context/useLanguage'
 
 const projects = [
@@ -27,11 +28,50 @@ const couleurs = {
 
 const technosDisponibles = ["Toutes", ...new Set(projects.map(p => p.tech))]
 
-function Modal({ project, onClose }) {
+function Modal({ project, onClose, returnFocusRef }) {
   const [photoIndex, setPhotoIndex] = useState(0)
   const { t } = useLanguage()
+  const dialogRef = useRef(null)
+  const closeButtonRef = useRef(null)
+  const titleId = `modal-title-${project.id}`
 
-  return (
+  useEffect(() => {
+    const previouslyFocused = returnFocusRef?.current ?? document.activeElement
+    const root = document.getElementById('root')
+    root?.setAttribute('inert', '')
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusables = dialogRef.current.querySelectorAll(
+          'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusables.length === 0) return
+        const first = focusables[0]
+        const last = focusables[focusables.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      root?.removeAttribute('inert')
+      previouslyFocused?.focus?.()
+    }
+  }, [onClose, returnFocusRef])
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
@@ -41,6 +81,10 @@ function Modal({ project, onClose }) {
         onClick={onClose}
       >
         <motion.div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9 }}
@@ -59,34 +103,68 @@ function Modal({ project, onClose }) {
               <span className={`text-xs px-2 py-1 rounded-full border ${couleurs[project.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>
                 {project.tech}
               </span>
-              <h3 className="text-2xl font-bold text-white mt-2">{project.titre}</h3>
+              <h3 id={titleId} className="text-2xl font-bold text-white mt-2">{project.titre}</h3>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl transition-colors">✕</button>
+            <button
+              ref={closeButtonRef}
+              onClick={onClose}
+              aria-label={t.fermer}
+              className="text-gray-300 hover:text-white text-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 rounded transition-colors"
+            >
+              <span aria-hidden="true">✕</span>
+            </button>
           </div>
 
           <div className="relative mb-6">
-            <img src={project.photos[photoIndex]} alt={`screenshot ${photoIndex + 1}`} className="w-full h-full object-contain rounded-xl border border-cyan-400/20 bg-black/30" />
-            <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-black/50 px-2 py-1 rounded-full">{photoIndex + 1}/{project.photos.length}</span>
-            <button onClick={() => setPhotoIndex(i => (i === 0 ? project.photos.length - 1 : i - 1))} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center">‹</button>
-            <button onClick={() => setPhotoIndex(i => (i === project.photos.length - 1 ? 0 : i + 1))} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center">›</button>
-            <div className="flex justify-center gap-2 mt-3">
-              {project.photos.map((_, i) => (
-                <button key={i} onClick={() => setPhotoIndex(i)} className={`w-2 h-2 rounded-full transition-all ${i === photoIndex ? 'bg-cyan-400' : 'bg-white/30'}`} />
-              ))}
-            </div>
+            <img src={project.photos[photoIndex]} alt={`${project.titre}, ${t.captureEcran} ${photoIndex + 1}/${project.photos.length}`} className="w-full h-full object-contain rounded-xl border border-cyan-400/20 bg-black/30" />
+            <span aria-hidden="true" className="absolute bottom-2 right-2 text-xs text-gray-300 bg-black/50 px-2 py-1 rounded-full">{photoIndex + 1}/{project.photos.length}</span>
+            {project.photos.length > 1 && (
+              <>
+                <button
+                  onClick={() => setPhotoIndex(i => (i === 0 ? project.photos.length - 1 : i - 1))}
+                  aria-label={t.photoPrecedente}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+                >
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <button
+                  onClick={() => setPhotoIndex(i => (i === project.photos.length - 1 ? 0 : i + 1))}
+                  aria-label={t.photoSuivante}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+                >
+                  <span aria-hidden="true">›</span>
+                </button>
+                <div className="flex justify-center gap-2 mt-3">
+                  {project.photos.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPhotoIndex(i)}
+                      aria-label={`${t.voirPhoto} ${i + 1}`}
+                      aria-current={i === photoIndex}
+                      className={`w-2 h-2 rounded-full transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ${i === photoIndex ? 'bg-cyan-400' : 'bg-white/30'}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
-          <p className="text-gray-400 leading-relaxed mb-6">
+          <p className="text-gray-300 leading-relaxed mb-6">
             {t[project.id + 'desc'] || t.descAVenir}
           </p>
 
           <div className="flex gap-4">
-            <a href={project.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full border border-cyan-400/40 text-white hover:bg-cyan-400/10 transition-all">🐙 {t.github}</a>
-            <a href={project.live} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-400/20 border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/30 transition-all">🌐 {t.voirProjet}</a>
+            <a href={project.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full border border-cyan-400/40 text-white hover:bg-cyan-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all">
+              <span aria-hidden="true">🐙</span> {t.github}<span className="sr-only"> {t.nouvelleFenetre}</span>
+            </a>
+            <a href={project.live} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-400/20 border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all">
+              <span aria-hidden="true">🌐</span> {t.voirProjet}<span className="sr-only"> {t.nouvelleFenetre}</span>
+            </a>
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
 
@@ -95,6 +173,12 @@ function Projects() {
   const [filtre, setFiltre] = useState("tous")
   const [techno, setTechno] = useState("Toutes")
   const { t } = useLanguage()
+  const triggerRef = useRef(null)
+
+  const ouvrirProjet = (p, e) => {
+    triggerRef.current = e.currentTarget
+    setSelected(p)
+  }
 
   const projectsFiltres = projects
     .filter(p => filtre === "tous" || p.type === filtre)
@@ -114,7 +198,7 @@ function Projects() {
       {/* Filtre statut */}
       <div className="border border-cyan-400/20 rounded-2xl p-4 mb-4 relative">
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0a1628] px-4 text-xs text-cyan-400 tracking-widest uppercase">{t.filtreStatut}</span>
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-3" role="group" aria-label={t.filtrerParStatutLabel}>
           {[
             { key: "tous", label: t.tous },
             { key: "perso", label: t.perso },
@@ -123,7 +207,8 @@ function Projects() {
             <button
               key={f.key}
               onClick={() => setFiltre(f.key)}
-              className={`px-5 py-2 rounded-full border transition-all ${
+              aria-pressed={filtre === f.key}
+              className={`px-5 py-2 rounded-full border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ${
                 filtre === f.key
                   ? 'bg-cyan-400 text-[#04080f] border-cyan-400 font-semibold'
                   : 'border-cyan-400/40 text-white hover:bg-cyan-400/10'
@@ -138,12 +223,13 @@ function Projects() {
       {/* Filtre techno */}
       <div className="border border-cyan-400/20 rounded-2xl p-4 mb-10 relative">
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0a1628] px-4 text-xs text-cyan-400 tracking-widest uppercase">{t.filtreTechno}</span>
-        <div className="flex justify-center gap-3 flex-wrap">
+        <div className="flex justify-center gap-3 flex-wrap" role="group" aria-label={t.filtrerParTechnoLabel}>
           {technosDisponibles.map(tech => (
             <button
               key={tech}
               onClick={() => setTechno(tech)}
-              className={`px-5 py-2 rounded-full border transition-all ${
+              aria-pressed={techno === tech}
+              className={`px-5 py-2 rounded-full border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ${
                 techno === tech
                   ? 'bg-cyan-400 text-[#04080f] border-cyan-400 font-semibold'
                   : 'border-cyan-400/40 text-white hover:bg-cyan-400/10'
@@ -158,13 +244,15 @@ function Projects() {
       {/* Grille projets */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {projectsFiltres.map((p, i) => (
-          <motion.div
+          <motion.button
             key={p.titre}
+            type="button"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            onClick={() => setSelected(p)}
-            className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6 hover:border-cyan-400/50 hover:bg-white/10 transition-all cursor-pointer"
+            onClick={(e) => ouvrirProjet(p, e)}
+            aria-label={`${p.titre} : ${t.voirDetails}`}
+            className="text-left bg-white/5 border border-cyan-400/20 rounded-2xl p-6 hover:border-cyan-400/50 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all cursor-pointer"
           >
             <div className="flex items-center justify-between mb-3">
               <span className={`text-xs px-2 py-1 rounded-full border ${couleurs[p.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>
@@ -175,12 +263,12 @@ function Projects() {
               </span>
             </div>
             <h3 className="text-white font-bold mb-2">{p.titre}</h3>
-            <p className="text-gray-400 text-sm">{t[p.id + 'desc'] ? t[p.id + 'desc'].substring(0, 80) + '...' : t.clicDetails}</p>
-          </motion.div>
+            <p className="text-gray-300 text-sm">{t[p.id + 'desc'] ? t[p.id + 'desc'].substring(0, 80) + '...' : t.clicDetails}</p>
+          </motion.button>
         ))}
       </div>
 
-      {selected && <Modal project={selected} onClose={() => setSelected(null)} />}
+      {selected && <Modal project={selected} onClose={() => setSelected(null)} returnFocusRef={triggerRef} />}
     </section>
   )
 }

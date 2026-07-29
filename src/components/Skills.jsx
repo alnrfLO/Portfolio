@@ -1,53 +1,37 @@
 import { motion } from 'framer-motion'
 import { useLanguage } from '../context/useLanguage'
-const skills = [
-  {
-    categorie: "Frontend",
-    items: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Angular"]
-  },
-  {
-    categorie: "Backend",
-    items: ["Node.js", "PHP", "Python", "C++", "C#"]
-  },
-  {
-    categorie: "Base de données",
-    items: ["MySQL", "Postgres", "MangoDB"]
-  },
-  {
-    categorie: "Outils",
-    items: ["GitLab", "GitHub", "Agile / Scrum", "Git"]
-  },
-  {
-    categorie: "Langues",
-    items: ["Français — Natif", "Portugais — Natif", "Anglais — C1", "Espagnol — C1", "Italien — Notions", "Japonais — Notions"]
-  },
-  {
-    categorie: "Soft Skills",
-    items: ["Travail en équipe", "Autonomie", "Code review", "Résolution de problèmes", "Communication"]
-  },
-  {
-    categorie: "Certifications",
-    items: []
-  },
-]
 
-const couleurs = {
-  "Frontend": "text-white",
-  "Backend": "text-white",
-  "Base de données": "text-white",
-  "Outils": "text-white",
-  "Langues": "text-white",
-  "Soft Skills": "text-white",
-  "Certifications": "text-white",
+const techItems = {
+  Frontend: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Angular"],
+  Backend: ["Node.js", "PHP", "Python", "C++", "C#"],
+  BDD: ["MySQL", "Postgres", "MongoDB"],
+  Outils: ["GitLab", "GitHub", "Agile / Scrum", "Git"],
 }
 
-const certifications = [
-  { nom: "DIF — Diplôme Instructeur Fédéral Karaté", fichier: "/assets/certif/DIF.png" },
-  { nom: "PSC1 — Premiers Secours", fichier: "/assets/certif/PSC-ANTUNES-Rafael.pdf" },
-  { nom: "PSSM — Santé Mentale", fichier: "/assets/certif/PSSM.png" },
-]
+const certifFichiers = {
+  DIF: "/assets/certif/DIF.png",
+  PSC1: "/assets/certif/PSC-ANTUNES-Rafael.pdf",
+  PSSM: "/assets/certif/PSSM.png",
+}
+
 function Skills() {
   const { t } = useLanguage()
+
+  const skills = [
+    { categorie: t.skillsCategorieFrontend, items: techItems.Frontend },
+    { categorie: t.skillsCategorieBackend, items: techItems.Backend },
+    { categorie: t.skillsCategorieBDD, items: techItems.BDD },
+    { categorie: t.skillsCategorieOutils, items: techItems.Outils },
+    { categorie: t.skillsCategorieLangues, items: t.skillsLanguesItems },
+    { categorie: t.skillsCategorieSoft, items: t.skillsSoftItems },
+    { categorie: t.skillsCategorieCertifications, items: [] },
+  ]
+
+  const certifications = [
+    { key: 'DIF', nom: t.certifDIF, fichier: certifFichiers.DIF },
+    { key: 'PSC1', nom: t.certifPSC1, fichier: certifFichiers.PSC1 },
+    { key: 'PSSM', nom: t.certifPSSM, fichier: certifFichiers.PSSM },
+  ]
 
   return (
     <section id="Skills" className="min-h-screen px-6 md:px-16 pt-32 pb-24 text-white">
@@ -70,22 +54,23 @@ function Skills() {
             viewport={{ once: true }}
             className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6 hover:border-cyan-400/40 transition-all"
           >
-            <h3 className={`font-semibold mb-4 text-lg ${couleurs[groupe.categorie]}`}>
+            <h3 className="font-semibold mb-4 text-lg text-white">
               {groupe.categorie}
             </h3>
 
-            {groupe.categorie === "Certifications" ? (
+            {groupe.categorie === t.skillsCategorieCertifications ? (
               <div className="flex flex-col gap-3">
-                {certifications.map((cert, j) => (
+                {certifications.map((cert) => (
                   <a
-                    key={j}
+                    key={cert.key}
                     href={cert.fichier}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/40 hover:bg-white/10 transition-all group">
-                    <span className="text-white text-lg">📜</span>
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/40 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all group">
+                    <span className="text-white text-lg" aria-hidden="true">📜</span>
                     <span className="text-white text-sm group-hover:text-white transition-colors">{cert.nom}</span>
-                    <span className="ml-auto text-white/50 group-hover:text-white transition-colors">↗</span>
+                    <span className="sr-only"> {t.nouvelleFenetre}</span>
+                    <span aria-hidden="true" className="ml-auto text-white/50 group-hover:text-white transition-colors">↗</span>
                   </a>
                 ))}
               </div>
