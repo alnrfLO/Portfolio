@@ -20,11 +20,9 @@ function NavBar() {
 
   return (
     <header className="bg-[#071520] backdrop-blur-md border-b border-white/10 py-4">
-      <div className="mx-auto flex items-center justify-between px-6 sm:px-8">
-        {surAccueil ? (
-          <span className="font-display font-semibold text-white md:hidden">RAF</span>
-        ) : (
-          <Link to="/" className={`inline-flex items-center gap-2 ${lienClasses}`}>
+      <div className="mx-auto flex items-center justify-end px-6 sm:px-8">
+        {!surAccueil && (
+          <Link to="/" className={`mr-auto inline-flex items-center gap-2 md:hidden ${lienClasses}`}>
             <span aria-hidden="true">←</span> {t.retourAccueil}
           </Link>
         )}
