@@ -201,8 +201,8 @@ function Projects() {
       </motion.h2>
 
       {/* Filtre statut */}
-      <div className="border border-cyan-400/20 rounded-2xl p-4 mb-4 relative">
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0a1628] px-4 text-xs text-cyan-400 tracking-widest uppercase">{t.filtreStatut}</span>
+      <div className="mb-8">
+        <p className="text-sm text-cyan-400/70 mb-3 text-center">{t.filtreStatut}</p>
         <div className="flex justify-center gap-3" role="group" aria-label={t.filtrerParStatutLabel}>
           {[
             { key: "tous", label: t.tous },
@@ -226,8 +226,8 @@ function Projects() {
       </div>
 
       {/* Filtre techno */}
-      <div className="border border-cyan-400/20 rounded-2xl p-4 mb-10 relative">
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0a1628] px-4 text-xs text-cyan-400 tracking-widest uppercase">{t.filtreTechno}</span>
+      <div className="mb-10">
+        <p className="text-sm text-cyan-400/70 mb-3 text-center">{t.filtreTechno}</p>
         <div className="flex justify-center gap-3 flex-wrap" role="group" aria-label={t.filtrerParTechnoLabel}>
           {technosDisponibles.map(tech => (
             <button
@@ -257,7 +257,7 @@ function Projects() {
             transition={{ delay: i * 0.08 }}
             onClick={(e) => ouvrirProjet(p, e)}
             aria-label={`${p.titre} : ${t.voirDetails}`}
-            className="text-left bg-white/5 border border-cyan-400/20 rounded-2xl p-6 hover:border-cyan-400/50 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all cursor-pointer"
+            className="text-left bg-white/[0.03] border-l-2 border-cyan-400/40 rounded-r-xl p-6 hover:bg-white/[0.06] hover:border-cyan-400/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all cursor-pointer"
           >
             <div className="flex items-center justify-between mb-3">
               <span className={`text-xs px-2 py-1 rounded-full border ${couleurs[p.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>

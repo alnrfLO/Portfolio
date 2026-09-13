@@ -123,6 +123,26 @@ function Hero({ headingRef }) {
           <TypewriterText text={t.devTitle} delay={(totalDuration + 1.8) * 1000} speed={30} showCursor={true} key={`subtitle-${langue}`} />
         </span>
       </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: totalDuration + 3.6, duration: 0.6 }}
+        className="flex flex-wrap justify-center gap-4 mt-10"
+      >
+        <a
+          href="#Projects"
+          className="px-6 py-3 rounded-full bg-cyan-400 text-[#04080f] font-display font-semibold hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-colors"
+        >
+          {t.voirProjets}
+        </a>
+        <a
+          href="#Contact"
+          className="px-6 py-3 rounded-full border border-cyan-400/40 text-white font-display font-semibold hover:bg-cyan-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-colors"
+        >
+          {t.mEcrire}
+        </a>
+      </motion.div>
     </section>
   )
 }

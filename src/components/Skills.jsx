@@ -44,15 +44,15 @@ function Skills() {
         {t.skillsTitle}
       </motion.h2>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
         {skills.map((groupe, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.08 }}
             viewport={{ once: true }}
-            className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6 hover:border-cyan-400/40 transition-all"
+            className="border-t border-cyan-400/15 pt-5"
           >
             <h3 className="font-semibold mb-4 text-lg text-white">
               {groupe.categorie}
@@ -66,22 +66,21 @@ function Skills() {
                     href={cert.fichier}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/40 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all group">
-                    <span className="text-white text-lg" aria-hidden="true">📜</span>
-                    <span className="text-white text-sm group-hover:text-white transition-colors">{cert.nom}</span>
+                    className="flex items-center gap-3 py-1 text-white/90 hover:text-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-colors group">
+                    <span className="text-sm">{cert.nom}</span>
                     <span className="sr-only"> {t.nouvelleFenetre}</span>
-                    <span aria-hidden="true" className="ml-auto text-white/50 group-hover:text-white transition-colors">↗</span>
+                    <span aria-hidden="true" className="text-white/40 group-hover:text-cyan-300 transition-colors">↗</span>
                   </a>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-x-3 gap-y-2">
                 {groupe.items.map((skill, j) => (
                   <span
                     key={j}
-                    className="px-3 py-1 rounded-full border border-cyan-400/40 text-sm text-white hover:bg-cyan-400/10 transition-colors"
+                    className="text-sm text-gray-300"
                   >
-                    {skill}
+                    {skill}{j < groupe.items.length - 1 && <span className="text-cyan-400/40 ml-3">·</span>}
                   </span>
                 ))}
               </div>
