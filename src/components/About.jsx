@@ -33,13 +33,13 @@ function About() {
       </motion.h2>
 
       {/* Intro */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 mb-16">
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 mb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
-          className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
+          className="border-l-2 border-cyan-400/30 pl-6"
         >
           <h3 className="text-xl font-semibold text-white mb-3">{t.introTitle}</h3>
           <p className="text-gray-300 leading-relaxed">{t.introText}</p>
@@ -50,7 +50,7 @@ function About() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           viewport={{ once: true }}
-          className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
+          className="border-l-2 border-cyan-400/30 pl-6"
         >
           <h3 className="text-xl font-semibold text-white mb-3">{t.sportTitle}</h3>
           <ul className="text-gray-300 space-y-2 text-sm">
@@ -62,15 +62,14 @@ function About() {
       </div>
 
       {/* Timelines */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           viewport={{ once: true }}
-          className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
-          <h3 className="text-xl font-semibold text-white mb-8"><span aria-hidden="true">📚</span> {t.formationTitle}</h3>
+          <h3 className="text-xl font-semibold text-white mb-8">{t.formationTitle}</h3>
           {t.formationItems.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
         </motion.div>
 
@@ -79,9 +78,8 @@ function About() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           viewport={{ once: true }}
-          className="bg-white/5 border border-cyan-400/20 rounded-2xl p-6"
         >
-          <h3 className="text-xl font-semibold text-white mb-8"><span aria-hidden="true">💼</span> {t.experienceTitle}</h3>
+          <h3 className="text-xl font-semibold text-white mb-8">{t.experienceTitle}</h3>
           {t.experienceItems.map((item, i) => <TimelineItem key={i} {...item} index={i} />)}
         </motion.div>
       </div>
