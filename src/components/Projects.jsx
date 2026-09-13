@@ -20,6 +20,7 @@ const projects = [
   { id: "proj15", titre: "Mathdle", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mathdle", live: "https://mathdlee.vercel.app", photos: ["/assets/projets/Que-regarder-ce-soir/quereg1.png", "/assets/projets/Que-regarder-ce-soir/quereg2.png"] },
   { id: "proj16", titre: "Codex du Voyageur (Dashboard gaming)", tech: "JS/HTML/CSS", type: "perso", github: "https://github.com/alnrfLO/alnrflo-dashboard", live: "https://github.com/alnrfLO/alnrflo-dashboard", photos: ["/assets/projets/poker/1.png", "/assets/projets/poker/2.png"] },
   { id: "proj17", titre: "MCU Watchlist", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mcu-watchlist", live: "https://github.com/alnrfLO/mcu-watchlist", photos: ["/assets/projets/python/pong/6.png", "/assets/projets/python/tetris/8.png"] },
+  { id: "proj18", titre: "Chaos (mod Minecraft)", tech: "Java", type: "perso", github: "https://github.com/alnrfLO/chaos_mode", live: "https://github.com/alnrfLO/chaos_mode", photos: ["/assets/projets/python/snake/7.png", "/assets/projets/python/tictactoe/5.png"] },
 ]
 
 const couleurs = {
@@ -27,6 +28,7 @@ const couleurs = {
   "HTML/CSS/PHP": "bg-orange-500/20 text-orange-300 border-orange-500/30",
   "JS/HTML/CSS": "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
   "React": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  "Java": "bg-red-500/20 text-red-300 border-red-500/30",
 }
 
 const technosDisponibles = ["Toutes", ...new Set(projects.map(p => p.tech))]
