@@ -12,11 +12,14 @@ function NavBar() {
   const langues = ['fr', 'en', 'pt', 'es']
   const surAccueil = pathname === '/'
 
-  useEffect(() => {
-    setMenuOuvert(false)
-  }, [pathname])
-
   const fermerMenu = () => setMenuOuvert(false)
+
+  useEffect(() => {
+    if (!menuOuvert) return
+    const surEchap = (e) => { if (e.key === 'Escape') setMenuOuvert(false) }
+    document.addEventListener('keydown', surEchap)
+    return () => document.removeEventListener('keydown', surEchap)
+  }, [menuOuvert])
 
   return (
     <header className="bg-[#071520] backdrop-blur-md border-b border-white/10 py-4">
@@ -82,6 +85,8 @@ function NavBar() {
       {surAccueil && (
         <div
           id="menu-mobile"
+          inert={!menuOuvert}
+          aria-hidden={!menuOuvert}
           className={`md:hidden overflow-hidden transition-[max-height] duration-300 ${menuOuvert ? 'max-h-96' : 'max-h-0'}`}
         >
           <nav aria-label={t.menuPrincipal} className="px-6 pt-4">
