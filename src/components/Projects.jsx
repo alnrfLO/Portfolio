@@ -17,6 +17,9 @@ const projects = [
   { id: "proj12", titre: "Wiki Porto", tech: "Python", type: "perso", github: "https://github.com/alnrfLO/fc_porto_wiki", live: "https://github.com/alnrfLO/fc_porto_wiki", photos: ["/assets/projets/python/pong/6.png", "/assets/projets/python/tetris/8.png"] },
   { id: "proj13", titre: "Visual Novel", tech: "Ren'Py", type: "perso", github: "https://github.com/alnrfLO/visual-novel", live: "https://github.com/alnrfLO/visual-novel", photos: ["/assets/projets/python/snake/7.png", "/assets/projets/python/tictactoe/5.png"], enTravaux: true },
   { id: "proj14", titre: "SAE 401", tech: "HTML/CSS/PHP", type: "scolaire", github: "https://github.com/alnrfLO/SAE401", live: "https://github.com/alnrfLO/SAE401", photos: ["/assets/projets/203/4.png", "/assets/projets/303/3.png"] },
+  { id: "proj15", titre: "Mathdle", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mathdle", live: "https://mathdlee.vercel.app", photos: ["/assets/projets/Que-regarder-ce-soir/quereg1.png", "/assets/projets/Que-regarder-ce-soir/quereg2.png"] },
+  { id: "proj16", titre: "Codex du Voyageur (Dashboard gaming)", tech: "JS/HTML/CSS", type: "perso", github: "https://github.com/alnrfLO/alnrflo-dashboard", live: "https://github.com/alnrfLO/alnrflo-dashboard", photos: ["/assets/projets/poker/1.png", "/assets/projets/poker/2.png"] },
+  { id: "proj17", titre: "MCU Watchlist", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mcu-watchlist", live: "https://github.com/alnrfLO/mcu-watchlist", photos: ["/assets/projets/python/pong/6.png", "/assets/projets/python/tetris/8.png"] },
 ]
 
 const couleurs = {
