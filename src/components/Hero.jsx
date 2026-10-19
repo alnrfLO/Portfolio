@@ -22,13 +22,14 @@ const paths = [
 
 
 
-function TypewriterText({ text, delay = 0, speed = 50, showCursor = false, key: externalKey }) {
+function TypewriterText({ text, delay = 0, speed = 50, showCursor = false }) {
   const [displayedText, setDisplayedText] = useState('')
 
   useEffect(() => {
     let currentIndex = 0
+    let interval
     const timeout = setTimeout(() => {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         if (currentIndex <= text.length) {
           setDisplayedText(text.substring(0, currentIndex))
           currentIndex++
@@ -36,10 +37,12 @@ function TypewriterText({ text, delay = 0, speed = 50, showCursor = false, key: 
           clearInterval(interval)
         }
       }, speed)
-      return () => clearInterval(interval)
     }, delay)
-    return () => clearTimeout(timeout)
-  }, [text, delay, speed, externalKey])
+    return () => {
+      clearTimeout(timeout)
+      clearInterval(interval)
+    }
+  }, [text, delay, speed])
 
   return (
     <>
