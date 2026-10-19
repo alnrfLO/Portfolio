@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useLanguage } from '../context/useLanguage'
 
@@ -33,17 +33,25 @@ const couleurs = {
 
 const technosDisponibles = ["Toutes", ...new Set(projects.map(p => p.tech))]
 
+const couleursType = {
+  perso: "text-pink-400 bg-pink-400/10",
+  scolaire: "text-green-400 bg-green-400/10",
+}
+
 function Modal({ project, onClose, returnFocusRef }) {
-  const [photoIndex, setPhotoIndex] = useState(0)
   const { t } = useLanguage()
   const dialogRef = useRef(null)
   const closeButtonRef = useRef(null)
   const titleId = `modal-title-${project.id}`
+  const couleurTech = couleurs[project.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+  const aUnSite = project.live && project.live !== project.github
 
   useEffect(() => {
     const previouslyFocused = returnFocusRef?.current ?? document.activeElement
     const root = document.getElementById('root')
+    const overflowInitial = document.body.style.overflow
     root?.setAttribute('inert', '')
+    document.body.style.overflow = 'hidden'
     closeButtonRef.current?.focus()
 
     const handleKeyDown = (e) => {
@@ -72,103 +80,119 @@ function Modal({ project, onClose, returnFocusRef }) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       root?.removeAttribute('inert')
+      document.body.style.overflow = overflowInitial
       previouslyFocused?.focus?.()
     }
   }, [onClose, returnFocusRef])
 
   return createPortal(
-    <AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-6"
+      onClick={onClose}
+    >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-8"
-        onClick={onClose}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        initial={{ opacity: 0, y: 32, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 24, scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+        className="relative flex w-full max-w-3xl max-h-[92dvh] flex-col overflow-hidden rounded-t-2xl border border-b-0 border-cyan-400/20 bg-[#0a1628] bg-[image:radial-gradient(ellipse_at_top,rgba(34,211,238,0.12),transparent_60%)] shadow-[0_0_80px_-20px_rgba(34,211,238,0.45)] sm:max-h-[88dvh] sm:rounded-2xl sm:border-b [@media(max-height:500px)]:overflow-y-auto"
+        onClick={e => e.stopPropagation()}
       >
-        <motion.div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="relative bg-[#0a1628] border border-cyan-400/30 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-          onClick={e => e.stopPropagation()}
-        >
-          {project.enTravaux && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
-              <span className="block border-2 border-cyan-400/60 bg-cyan-400/20 text-cyan-300 px-6 py-3 text-lg uppercase tracking-widest backdrop-blur-sm font-semibold rotate-[-12deg]">
-                {t.enTravaux}
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-400/70 to-transparent" />
+
+        {/* En-tête */}
+        <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
+          <div className="min-w-0">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className={`text-xs px-2 py-1 rounded-full ${couleursType[project.type]}`}>
+                {project.type === 'perso' ? t.perso : t.scolaire}
               </span>
+              {project.enTravaux && (
+                <span className="text-xs px-2 py-1 rounded-full border border-cyan-400/60 bg-cyan-400/20 text-cyan-300 uppercase tracking-wider font-semibold">
+                  {t.enTravaux}
+                </span>
+              )}
             </div>
-          )}
-          <div className="flex items-center justify-between mb-6">
+            <h3 id={titleId} className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">{project.titre}</h3>
+          </div>
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
+            aria-label={t.fermer}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-gray-300 hover:border-cyan-400/50 hover:bg-cyan-400/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-colors"
+          >
+            <svg aria-hidden="true" focusable="false" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+
+        {/* Contenu défilant (sur écran très bas, c'est toute la modale qui défile) */}
+        <div className="overflow-y-auto px-6 pb-6 sm:px-8 sm:pb-8 [@media(max-height:500px)]:shrink-0 [@media(max-height:500px)]:overflow-visible">
+          {/* Captures d'écran masquées en attendant l'intégration des vidéos de démo */}
+          <div className="relative mb-8 flex min-h-56 flex-col overflow-hidden rounded-xl border border-amber-400/40 bg-black/30 sm:min-h-72">
+            <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-4 text-center">
+              <span aria-hidden="true" className="text-4xl">🚧</span>
+              <p className="font-display text-lg font-bold uppercase tracking-widest text-amber-300">{t.videosTitre}</p>
+              <p className="max-w-md text-sm leading-relaxed text-gray-300">{t.videosTexte}</p>
+            </div>
+            <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="md:col-span-2">
+              <h4 className="mb-3 font-mono text-xs uppercase tracking-widest text-cyan-400">{t.labelProjet}</h4>
+              <p className="leading-relaxed text-gray-300">
+                {t[project.id + 'desc'] || t.descAVenir}
+              </p>
+            </div>
             <div>
-              <span className={`text-xs px-2 py-1 rounded-full border ${couleurs[project.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>
-                {project.tech}
-              </span>
-              <h3 id={titleId} className="text-2xl font-bold text-white mt-2">{project.titre}</h3>
+              <h4 className="mb-3 font-mono text-xs uppercase tracking-widest text-cyan-400">{t.labelTechnos}</h4>
+              <ul className="flex flex-wrap gap-2">
+                {project.tech.split('/').map(techno => (
+                  <li key={techno} className={`text-xs px-3 py-1.5 rounded-full border ${couleurTech}`}>{techno}</li>
+                ))}
+              </ul>
             </div>
-            <button
-              ref={closeButtonRef}
-              onClick={onClose}
-              aria-label={t.fermer}
-              className="text-gray-300 hover:text-white text-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 rounded transition-colors"
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col-reverse gap-3 border-t border-white/10 bg-black/20 px-6 py-4 sm:flex-row sm:justify-end sm:px-8">
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noreferrer"
+            className={`flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all ${
+              aUnSite
+                ? 'border border-white/15 text-white hover:border-cyan-400/60 hover:bg-cyan-400/10'
+                : 'bg-cyan-400 font-semibold text-[#04080f] hover:bg-cyan-300'
+            }`}
+          >
+            <svg aria-hidden="true" focusable="false" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.084-.729.084-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.81 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.930 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.230 3.285-1.230.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.920.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
+            {t.voirCode}<span className="sr-only"> {t.nouvelleFenetre}</span>
+          </a>
+          {aUnSite && (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 rounded-full bg-cyan-400 px-5 py-2.5 text-sm font-semibold text-[#04080f] hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all"
             >
-              <span aria-hidden="true">✕</span>
-            </button>
-          </div>
-
-          <div className="relative mb-6">
-            <img src={project.photos[photoIndex]} alt={`${project.titre}, ${t.captureEcran} ${photoIndex + 1}/${project.photos.length}`} className="w-full h-full object-contain rounded-xl border border-cyan-400/20 bg-black/30" />
-            <span aria-hidden="true" className="absolute bottom-2 right-2 text-xs text-gray-300 bg-black/50 px-2 py-1 rounded-full">{photoIndex + 1}/{project.photos.length}</span>
-            {project.photos.length > 1 && (
-              <>
-                <button
-                  onClick={() => setPhotoIndex(i => (i === 0 ? project.photos.length - 1 : i - 1))}
-                  aria-label={t.photoPrecedente}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
-                >
-                  <span aria-hidden="true">‹</span>
-                </button>
-                <button
-                  onClick={() => setPhotoIndex(i => (i === project.photos.length - 1 ? 0 : i + 1))}
-                  aria-label={t.photoSuivante}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
-                >
-                  <span aria-hidden="true">›</span>
-                </button>
-                <div className="flex justify-center gap-2 mt-3">
-                  {project.photos.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setPhotoIndex(i)}
-                      aria-label={`${t.voirPhoto} ${i + 1}`}
-                      aria-current={i === photoIndex}
-                      className={`w-2 h-2 rounded-full transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ${i === photoIndex ? 'bg-cyan-400' : 'bg-white/30'}`}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          <p className="text-gray-300 leading-relaxed mb-6">
-            {t[project.id + 'desc'] || t.descAVenir}
-          </p>
-
-          <div className="flex gap-4">
-            <a href={project.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full border border-cyan-400/40 text-white hover:bg-cyan-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all">
-              <span aria-hidden="true">🐙</span> {t.github}<span className="sr-only"> {t.nouvelleFenetre}</span>
+              {t.voirProjet}
+              <svg aria-hidden="true" focusable="false" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M8 7h9v9" /></svg>
+              <span className="sr-only"> {t.nouvelleFenetre}</span>
             </a>
-            <a href={project.live} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-400/20 border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-all">
-              <span aria-hidden="true">🌐</span> {t.voirProjet}<span className="sr-only"> {t.nouvelleFenetre}</span>
-            </a>
-          </div>
-        </motion.div>
+          )}
+        </div>
       </motion.div>
-    </AnimatePresence>,
+    </motion.div>,
     document.body
   )
 }
@@ -184,6 +208,8 @@ function Projects() {
     triggerRef.current = e.currentTarget
     setSelected(p)
   }
+
+  const fermerProjet = useCallback(() => setSelected(null), [])
 
   const projectsFiltres = projects
     .filter(p => filtre === "tous" || p.type === filtre)
@@ -263,7 +289,7 @@ function Projects() {
               <span className={`text-xs px-2 py-1 rounded-full border ${couleurs[p.tech] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>
                 {p.tech}
               </span>
-              <span className={`text-xs px-2 py-1 rounded-full ${p.type === 'perso' ? 'text-pink-400 bg-pink-400/10' : 'text-green-400 bg-green-400/10'}`}>
+              <span className={`text-xs px-2 py-1 rounded-full ${couleursType[p.type]}`}>
                 {p.type === 'perso' ? t.perso : t.scolaire}
               </span>
             </div>
@@ -273,7 +299,9 @@ function Projects() {
         ))}
       </div>
 
-      {selected && <Modal project={selected} onClose={() => setSelected(null)} returnFocusRef={triggerRef} />}
+      <AnimatePresence>
+        {selected && <Modal key={selected.id} project={selected} onClose={fermerProjet} returnFocusRef={triggerRef} />}
+      </AnimatePresence>
     </section>
   )
 }
