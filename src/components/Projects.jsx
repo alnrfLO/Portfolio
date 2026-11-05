@@ -22,7 +22,7 @@ const projects = [
   { id: "proj15", titre: "Mathdle", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mathdle", live: "https://mathdlee.vercel.app", photos: [img("mathdle/partie.webp"), img("mathdle/menu.webp")] },
   { id: "proj16", titre: "Codex du Voyageur (Dashboard gaming)", tech: "JS/HTML/CSS", type: "perso", github: "https://github.com/alnrfLO/alnrflo-dashboard", live: "https://github.com/alnrfLO/alnrflo-dashboard", photos: [img("dashboard/accueil.webp"), img("dashboard/league-of-legends.webp"), img("dashboard/genshin.webp")] },
   { id: "proj17", titre: "MCU Watchlist", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mcu-watchlist", live: "https://github.com/alnrfLO/mcu-watchlist", photos: [img("mcu-watchlist/accueil.webp"), img("mcu-watchlist/calendrier.webp"), img("mcu-watchlist/stats.webp")] },
-  { id: "proj18", titre: "Chaos (mod Minecraft)", tech: "Java", type: "perso", github: "https://github.com/alnrfLO/chaos_mode", live: "https://github.com/alnrfLO/chaos_mode", photos: [img("chaos/portail.webp"), img("chaos/dimension.webp"), img("chaos/onglet-creatif.webp"), img("chaos/epee.webp")] },
+  { id: "proj18", titre: "Chaos (mod Minecraft)", tech: "Java", type: "perso", github: "https://github.com/alnrfLO/chaos_mode", live: "https://github.com/alnrfLO/chaos_mode", photos: [img("chaos/portail.webp"), img("chaos/dimension.webp"), img("chaos/campfire.webp"), img("chaos/campfire-interface.webp"), img("chaos/onglet-creatif.webp"), img("chaos/epee.webp")] },
 ]
 
 const couleurs = {
