@@ -3,24 +3,26 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useLanguage } from '../context/useLanguage'
 
+const img = (chemin) => `/assets/projets/${chemin}`
+
 const projects = [
-  { id: "proj1", titre: "Snake", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/snake", live: "https://github.com/alnrfLO/snake", photos: ["/assets/projets/python/snake/7.png"] },
-  { id: "proj2", titre: "Tetris", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/tetris", live: "https://github.com/alnrfLO/tetris", photos: ["/assets/projets/python/tetris/8.png"] },
-  { id: "proj3", titre: "Pong", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/pong", live: "https://github.com/alnrfLO/pong", photos: ["/assets/projets/python/pong/6.png"] },
-  { id: "proj4", titre: "TicTacToe", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/tictactoe", live: "https://github.com/alnrfLO/tictactoe", photos: ["/assets/projets/python/tictactoe/5.png"] },
-  { id: "proj5", titre: "SAE 203", tech: "HTML/CSS/PHP", type: "scolaire", github: "https://github.com/alnrfLO/SAE203", live: "https://github.com/alnrfLO/SAE203", photos: ["/assets/projets/203/4.png"], enTravaux: true },
-  { id: "proj6", titre: "SAE 303", tech: "JS/HTML/CSS", type: "scolaire", github: "https://github.com/alnrfLO/SAE303", live: "https://github.com/alnrfLO/SAE303", photos: ["/assets/projets/303/3.png"] },
-  { id: "proj8", titre: "Que regarder ce soir ?", tech: "React", type: "perso", github: "https://github.com/alnrfLO/que-regarder-ce-soir", live: "https://que-regarder-ce-soir.vercel.app", photos: ["/assets/projets/Que-regarder-ce-soir/quereg1.png", "/assets/projets/Que-regarder-ce-soir/quereg2.png"] },
-  { id: "proj9", titre: "Wiki Yofukashi no uta", tech: "React", type: "perso", github: "https://github.com/alnrfLO/yofukashi-no-uta", live: "https://github.com/alnrfLO/yofukashi-no-uta", photos: ["/assets/projets/Que-regarder-ce-soir/quereg1.png", "/assets/projets/Que-regarder-ce-soir/quereg2.png"] },
-  { id: "proj10", titre: "Poker Game", tech: "React", type: "perso", github: "https://github.com/alnrfLO/poker/", live: "https://poker-murex-seven.vercel.app", photos: ["/assets/projets/poker/1.png", "/assets/projets/poker/2.png"] },
-  { id: "proj11", titre: "Blackjack", tech: "Python", type: "perso", github: "https://github.com/alnrfLO/blackjack", live: "https://github.com/alnrfLO/blackjack", photos: ["/assets/projets/poker/1.png", "/assets/projets/poker/2.png"] },
-  { id: "proj12", titre: "Wiki Porto", tech: "Python", type: "perso", github: "https://github.com/alnrfLO/fc_porto_wiki", live: "https://github.com/alnrfLO/fc_porto_wiki", photos: ["/assets/projets/python/pong/6.png", "/assets/projets/python/tetris/8.png"] },
-  { id: "proj13", titre: "Visual Novel", tech: "Ren'Py", type: "perso", github: "https://github.com/alnrfLO/visual-novel", live: "https://github.com/alnrfLO/visual-novel", photos: ["/assets/projets/python/snake/7.png", "/assets/projets/python/tictactoe/5.png"], enTravaux: true },
-  { id: "proj14", titre: "SAE 401", tech: "HTML/CSS/PHP", type: "scolaire", github: "https://github.com/alnrfLO/SAE401", live: "https://github.com/alnrfLO/SAE401", photos: ["/assets/projets/203/4.png", "/assets/projets/303/3.png"] },
-  { id: "proj15", titre: "Mathdle", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mathdle", live: "https://mathdlee.vercel.app", photos: ["/assets/projets/Que-regarder-ce-soir/quereg1.png", "/assets/projets/Que-regarder-ce-soir/quereg2.png"] },
-  { id: "proj16", titre: "Codex du Voyageur (Dashboard gaming)", tech: "JS/HTML/CSS", type: "perso", github: "https://github.com/alnrfLO/alnrflo-dashboard", live: "https://github.com/alnrfLO/alnrflo-dashboard", photos: ["/assets/projets/poker/1.png", "/assets/projets/poker/2.png"] },
-  { id: "proj17", titre: "MCU Watchlist", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mcu-watchlist", live: "https://github.com/alnrfLO/mcu-watchlist", photos: ["/assets/projets/python/pong/6.png", "/assets/projets/python/tetris/8.png"] },
-  { id: "proj18", titre: "Chaos (mod Minecraft)", tech: "Java", type: "perso", github: "https://github.com/alnrfLO/chaos_mode", live: "https://github.com/alnrfLO/chaos_mode", photos: ["/assets/projets/python/snake/7.png", "/assets/projets/python/tictactoe/5.png"] },
+  { id: "proj1", titre: "Snake", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/snake", live: "https://github.com/alnrfLO/snake", photos: [img("python/snake/partie.webp"), img("python/snake/game-over.webp")] },
+  { id: "proj2", titre: "Tetris", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/tetris", live: "https://github.com/alnrfLO/tetris", photos: [img("python/tetris/partie.webp"), img("python/tetris/accueil.webp")] },
+  { id: "proj3", titre: "Pong", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/pong", live: "https://github.com/alnrfLO/pong", photos: [img("python/pong/partie.webp"), img("python/pong/echange.webp")] },
+  { id: "proj4", titre: "TicTacToe", tech: "Python", type: "scolaire", github: "https://github.com/alnrfLO/tictactoe", live: "https://github.com/alnrfLO/tictactoe", photos: [img("python/tictactoe/partie.webp"), img("python/tictactoe/debut.webp")] },
+  { id: "proj5", titre: "SAE 203", tech: "HTML/CSS/PHP", type: "scolaire", github: "https://github.com/alnrfLO/SAE203", live: "https://github.com/alnrfLO/SAE203", photos: [img("203/4.png")], enTravaux: true },
+  { id: "proj6", titre: "SAE 303", tech: "JS/HTML/CSS", type: "scolaire", github: "https://github.com/alnrfLO/SAE303", live: "https://github.com/alnrfLO/SAE303", photos: [img("303/departement.webp"), img("303/carte.webp")] },
+  { id: "proj8", titre: "Que regarder ce soir ?", tech: "React", type: "perso", github: "https://github.com/alnrfLO/que-regarder-ce-soir", live: "https://que-regarder-ce-soir.vercel.app", photos: [img("Que-regarder-ce-soir/suggestion.webp"), img("Que-regarder-ce-soir/fiche.webp")] },
+  { id: "proj9", titre: "Wiki Yofukashi no uta", tech: "React", type: "perso", github: "https://github.com/alnrfLO/yofukashi-no-uta", live: "https://github.com/alnrfLO/yofukashi-no-uta", photos: [img("yofukashi-no-uta/accueil.webp"), img("yofukashi-no-uta/personnages.webp"), img("yofukashi-no-uta/chronologie.webp")] },
+  { id: "proj10", titre: "Poker Game", tech: "React", type: "perso", github: "https://github.com/alnrfLO/poker/", live: "https://poker-murex-seven.vercel.app", photos: [img("poker/accueil.webp"), img("poker/2.png"), img("poker/regles.webp"), img("poker/familles.webp")] },
+  { id: "proj11", titre: "Blackjack", tech: "Python", type: "perso", github: "https://github.com/alnrfLO/blackjack", live: "https://github.com/alnrfLO/blackjack", photos: [img("blackjack/mise.webp"), img("blackjack/main.webp"), img("blackjack/resultat.webp")] },
+  { id: "proj12", titre: "Wiki Porto", tech: "Python", type: "perso", github: "https://github.com/alnrfLO/fc_porto_wiki", live: "https://github.com/alnrfLO/fc_porto_wiki", photos: [img("porto/accueil.webp"), img("porto/fiche-match.webp"), img("porto/classements.webp")] },
+  { id: "proj13", titre: "Visual Novel", tech: "Ren'Py", type: "perso", github: "https://github.com/alnrfLO/visual-novel", live: "https://github.com/alnrfLO/visual-novel", photos: [], enTravaux: true },
+  { id: "proj14", titre: "SAE 401", tech: "HTML/CSS/PHP", type: "scolaire", github: "https://github.com/alnrfLO/SAE401", live: "https://github.com/alnrfLO/SAE401", photos: [img("sae401/accueil.webp"), img("sae401/actualites.webp")] },
+  { id: "proj15", titre: "Mathdle", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mathdle", live: "https://mathdlee.vercel.app", photos: [img("mathdle/partie.webp"), img("mathdle/menu.webp")] },
+  { id: "proj16", titre: "Codex du Voyageur (Dashboard gaming)", tech: "JS/HTML/CSS", type: "perso", github: "https://github.com/alnrfLO/alnrflo-dashboard", live: "https://github.com/alnrfLO/alnrflo-dashboard", photos: [img("dashboard/accueil.webp"), img("dashboard/league-of-legends.webp"), img("dashboard/genshin.webp")] },
+  { id: "proj17", titre: "MCU Watchlist", tech: "React", type: "perso", github: "https://github.com/alnrfLO/mcu-watchlist", live: "https://github.com/alnrfLO/mcu-watchlist", photos: [img("mcu-watchlist/accueil.webp"), img("mcu-watchlist/calendrier.webp"), img("mcu-watchlist/stats.webp")] },
+  { id: "proj18", titre: "Chaos (mod Minecraft)", tech: "Java", type: "perso", github: "https://github.com/alnrfLO/chaos_mode", live: "https://github.com/alnrfLO/chaos_mode", photos: [] },
 ]
 
 const couleurs = {
@@ -36,6 +38,54 @@ const technosDisponibles = ["Toutes", ...new Set(projects.map(p => p.tech))]
 const couleursType = {
   perso: "text-pink-400 bg-pink-400/10",
   scolaire: "text-green-400 bg-green-400/10",
+}
+
+const boutonPhoto = "absolute top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#0a1628]/75 text-white hover:bg-[#0a1628] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 transition-colors"
+
+function Galerie({ project }) {
+  const { t } = useLanguage()
+  const [index, setIndex] = useState(0)
+  const total = project.photos.length
+  const precedente = () => setIndex(i => (i === 0 ? total - 1 : i - 1))
+  const suivante = () => setIndex(i => (i === total - 1 ? 0 : i + 1))
+
+  return (
+    <div className="mb-8">
+      <div className="relative overflow-hidden rounded-xl border border-cyan-400/20 bg-white">
+        <img
+          src={project.photos[index]}
+          alt={`${project.titre}, ${t.captureEcran} ${index + 1}/${total}`}
+          width="1920"
+          height="1080"
+          className="block aspect-video w-full object-contain"
+        />
+        {total > 1 && (
+          <>
+            <span aria-hidden="true" className="absolute bottom-2 right-2 rounded-full bg-[#0a1628]/75 px-2 py-1 text-xs text-white">{index + 1}/{total}</span>
+            <button onClick={precedente} aria-label={t.photoPrecedente} className={`${boutonPhoto} left-2`}>
+              <span aria-hidden="true" className="text-xl leading-none">‹</span>
+            </button>
+            <button onClick={suivante} aria-label={t.photoSuivante} className={`${boutonPhoto} right-2`}>
+              <span aria-hidden="true" className="text-xl leading-none">›</span>
+            </button>
+          </>
+        )}
+      </div>
+      {total > 1 && (
+        <div className="mt-3 flex justify-center gap-2">
+          {project.photos.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              aria-label={`${t.voirPhoto} ${i + 1}`}
+              aria-current={i === index}
+              className={`h-2 rounded-full transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ${i === index ? 'w-5 bg-cyan-400' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function Modal({ project, onClose, returnFocusRef }) {
@@ -134,16 +184,20 @@ function Modal({ project, onClose, returnFocusRef }) {
 
         {/* Contenu défilant (sur écran très bas, c'est toute la modale qui défile) */}
         <div className="overflow-y-auto px-6 pb-6 sm:px-8 sm:pb-8 [@media(max-height:500px)]:shrink-0 [@media(max-height:500px)]:overflow-visible">
-          {/* Captures d'écran masquées en attendant l'intégration des vidéos de démo */}
-          <div className="relative mb-8 flex min-h-56 flex-col overflow-hidden rounded-xl border border-amber-400/40 bg-black/30 sm:min-h-72">
-            <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
-            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-4 text-center">
-              <span aria-hidden="true" className="text-4xl">🚧</span>
-              <p className="font-display text-lg font-bold uppercase tracking-widest text-amber-300">{t.videosTitre}</p>
-              <p className="max-w-md text-sm leading-relaxed text-gray-300">{t.videosTexte}</p>
+          {/* Captures d'écran ; bandeau « travaux » pour les projets qui n'en ont pas encore */}
+          {project.photos.length > 0 ? (
+            <Galerie project={project} />
+          ) : (
+            <div className="relative mb-8 flex min-h-56 flex-col overflow-hidden rounded-xl border border-amber-400/40 bg-black/30 sm:min-h-72">
+              <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
+              <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-4 text-center">
+                <span aria-hidden="true" className="text-4xl">🚧</span>
+                <p className="font-display text-lg font-bold uppercase tracking-widest text-amber-300">{t.videosTitre}</p>
+                <p className="max-w-md text-sm leading-relaxed text-gray-300">{t.videosTexte}</p>
+              </div>
+              <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
             </div>
-            <div aria-hidden="true" className="h-3 shrink-0 bg-[repeating-linear-gradient(-45deg,#fbbf24_0_14px,#0a1628_14px_28px)]" />
-          </div>
+          )}
 
           <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
