@@ -32,7 +32,6 @@ function About() {
         {t.apropos}
       </motion.h2>
 
-      {/* Intro */}
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 mb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -61,7 +60,6 @@ function About() {
         </motion.div>
       </div>
 
-      {/* Timelines */}
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

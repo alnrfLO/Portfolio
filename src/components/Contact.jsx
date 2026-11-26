@@ -29,7 +29,6 @@ function Contact() {
     
     <div className="w-full max-w-4xl grid md:grid-cols-2 gap-10">
     
-    {/* Formulaire */}
     <motion.form
     action="https://formspree.io/f/xrbnlbdd"
     method="POST"
@@ -77,7 +76,6 @@ function Contact() {
     </button>
     </motion.form>
     
-    {/* Liens */}
     <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}

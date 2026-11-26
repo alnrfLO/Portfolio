@@ -157,7 +157,6 @@ function Modal({ project, onClose, returnFocusRef }) {
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-400/70 to-transparent" />
 
-        {/* En-tête */}
         <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
           <div className="min-w-0">
             <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -182,9 +181,7 @@ function Modal({ project, onClose, returnFocusRef }) {
           </button>
         </div>
 
-        {/* Contenu défilant (sur écran très bas, c'est toute la modale qui défile) */}
         <div className="overflow-y-auto px-6 pb-6 sm:px-8 sm:pb-8 [@media(max-height:500px)]:shrink-0 [@media(max-height:500px)]:overflow-visible">
-          {/* Captures d'écran ; bandeau « travaux » pour les projets qui n'en ont pas encore */}
           {project.photos.length > 0 ? (
             <Galerie project={project} />
           ) : (
@@ -217,7 +214,6 @@ function Modal({ project, onClose, returnFocusRef }) {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col-reverse gap-3 border-t border-white/10 bg-black/20 px-6 py-4 sm:flex-row sm:justify-end sm:px-8">
           <a
             href={project.github}
@@ -280,7 +276,6 @@ function Projects() {
         {t.projetsTitle}
       </motion.h2>
 
-      {/* Filtre statut */}
       <div className="mb-8">
         <p className="text-sm text-cyan-400/70 mb-3 text-center">{t.filtreStatut}</p>
         <div className="flex justify-center gap-3" role="group" aria-label={t.filtrerParStatutLabel}>
@@ -305,7 +300,6 @@ function Projects() {
         </div>
       </div>
 
-      {/* Filtre techno */}
       <div className="mb-10">
         <p className="text-sm text-cyan-400/70 mb-3 text-center">{t.filtreTechno}</p>
         <div className="flex justify-center gap-3 flex-wrap" role="group" aria-label={t.filtrerParTechnoLabel}>
@@ -326,7 +320,6 @@ function Projects() {
         </div>
       </div>
 
-      {/* Grille projets */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {projectsFiltres.map((p, i) => (
           <motion.button
